@@ -6,6 +6,8 @@ import (
 )
 
 
+// Sends a LoadChats request to tdlib.
+// Returns a pointer to the Kilogram instance
 func GetChats(all bool) *Kilogram {
 
     kg := NewKilogram()
@@ -71,7 +73,7 @@ func handleUpdates(kilogram *Kilogram, l *tdlib.Listener) {
     kilogram.waitgroup.Done()
 }
 
-func PrintChats(chats []*tdlib.Chat, all bool) {
+func PrintChats(chats map[int64]*tdlib.Chat, all bool) {
 
     for id, chat := range chats {
 
@@ -82,7 +84,6 @@ func PrintChats(chats []*tdlib.Chat, all bool) {
         if chat.LastMessage == nil { continue }
 
         fmt.Printf("%d\n", chat.LastMessage.Id)
-
     }
 
 }
