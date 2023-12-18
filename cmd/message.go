@@ -5,10 +5,16 @@ package cmd
 
 import (
 	"log"
-	"strconv"
+	"os"
+	"strings"
 
 	"github.com/butbkadrug/kilogram/internal/client"
 	"github.com/spf13/cobra"
+)
+
+var(
+    file string
+    text string
 )
 
 // messageCmd represents the message command
@@ -22,24 +28,52 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-        if len(args) < 2 {
-            log.Fatal("ERROR 2 arguments are required")
-        }
-        cid, err := strconv.Atoi(args[0])
 
-        if err != nil {
-            log.Fatal(err)
+        text = strings.Join(args, " ")
+
+        if file != "" {
+
+            bytes, err := os.ReadFile(file)
+
+            if err != nil {
+                log.Fatal(err)
+            }
+
+            text = string(bytes)
+
         }
-        mid, err := strconv.Atoi(args[1])
-        if err != nil {
-            log.Fatal(err)
+
+        if len(text) < 1 {
+            log.Fatal("Message cannot be empty!")
         }
-        client.GetMessage(int64(cid), int64(mid))
+        client.SendTextMessage(dest, text)
 	},
 }
 
 func init() {
-	getCmd.AddCommand(messageCmd)
+	newCmd.AddCommand(messageCmd)
+
+    messageCmd.Flags().Int64VarP(
+        &dest,
+        "dest",
+        "d",
+        0,
+        "Chat id to send message to.(required)",
+    )
+
+    err := messageCmd.MarkFlagRequired("dest")
+
+    if err != nil {
+        log.Fatal("Cant mark flag as required: ", err)
+    }
+
+    messageCmd.Flags().StringVarP(
+        &file,
+        "file",
+        "f",
+        "",
+        "Path to text file to send as a message",
+    )
 
 	// Here you will define your flags and configuration settings.
 

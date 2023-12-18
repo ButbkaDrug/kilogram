@@ -50,7 +50,7 @@ func ForwardMessage(source, dest int64, messages []int64) {
         ChatId: dest,
         FromChatId: source,
         MessageIds: messages,
-        SendCopy: true,
+        SendCopy: false,
         Options: nil,
         OnlyPreview: false,
         RemoveCaption: false,
@@ -67,6 +67,7 @@ func ForwardMessage(source, dest int64, messages []int64) {
 }
 
 func updateHandler(kg *Kilogram, l *tdlib.Listener) {
+    fmt.Printf("Waiting for the message to be forwarder...")
     defer kg.waitgroup.Done()
     for update := range l.Updates {
         switch u := update.(type){

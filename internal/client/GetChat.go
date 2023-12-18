@@ -6,20 +6,19 @@ import (
 
 	tdlib "github.com/zelenin/go-tdlib/client"
 )
-
-func GetChat(id int64) {
+// Fetches messeges for the chat with specified id
+// You can also specify limit to load nessesery number of messages(max 100)
+func GetChat(id int64, limit int32) {
     kg := GetChats(true)
 
     // Fetch messages for chat with given id
 
     var (
         start int64
-        limit int32
         msgs map[int64]*tdlib.Message
         positions []int64
     )
 
-    limit = 10
     start = 0
     msgs = make(map[int64]*tdlib.Message, limit)
 
@@ -44,7 +43,7 @@ func GetChat(id int64) {
         start += messages.Messages[len(messages.Messages)-1].Id
         limit -= messages.TotalCount
 
-        if limit <= 1 { break }
+        if limit < 1 { break }
     }
 
     for _, msg := range msgs {

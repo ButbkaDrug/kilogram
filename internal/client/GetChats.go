@@ -61,6 +61,7 @@ func handleUpdates(kilogram *Kilogram, l *tdlib.Listener) {
             kilogram.Chats[upd.Chat.Id] = upd.Chat
         case *tdlib.UpdateChatPosition:
             // do something
+            kilogram.Positions[upd.Position.Order] = upd.ChatId
         case *tdlib.UpdateSupergroup:
             // groups = append(groups, upd.Supergroup)
         case *tdlib.UpdateChatReadInbox:
