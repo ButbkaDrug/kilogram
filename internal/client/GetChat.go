@@ -60,6 +60,7 @@ func GetChat(id int64, limit int32) *Kilochat {
                 log.Println("Coun't get Message reply...")
             }
 
+
             chat.Messages[m.Id] = m
         }
     }

@@ -16,14 +16,3 @@ func NewKilogram () *Kilogram {
         Messages: make(map[int64]*tdlib.Message),
     }
 }
-
-func getMessageText(msg *tdlib.Message) string {
-    switch m := msg.Content.(type){
-    case *tdlib.MessageText:
-        return m.Text.Text
-    case *tdlib.MessagePhoto:
-        return m.Caption.Text
-    default:
-        return msg.Content.MessageContentType()
-    }
-}

@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/butbkadrug/kilogram/internal/client"
+	"github.com/butbkadrug/kilogram/internal/render"
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +31,8 @@ to quickly create a Cobra application.`,
         if err != nil {
             log.Fatal(err)
         }
-        client.GetChat(int64(id), limit)
+        kc := client.GetChat(int64(id), limit)
+        render.PrintChat(kc)
 	},
 }
 
