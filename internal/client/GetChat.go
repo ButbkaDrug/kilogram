@@ -6,21 +6,30 @@ import (
 
 	tdlib "github.com/zelenin/go-tdlib/client"
 )
+
+type Kilochat struct{
+    Messages map[int64]*tdlib.Message
+    Positions []int64
+}
+
+func NewKilochat(size int) *Kilochat {
+
+    return & Kilochat{
+        Messages: make(map[int64]*tdlib.Message, size),
+        Positions: make([]int64, size),
+    }
+}
+
+
+
 // Fetches messeges for the chat with specified id
 // You can also specify limit to load nessesery number of messages(max 100)
-func GetChat(id int64, limit int32) {
+func GetChat(id int64, limit int32) *Kilochat {
+
+    var start int64
+
     kg := GetChats(true)
-
-    // Fetch messages for chat with given id
-
-    var (
-        start int64
-        msgs map[int64]*tdlib.Message
-        positions []int64
-    )
-
-    start = 0
-    msgs = make(map[int64]*tdlib.Message, limit)
+    chat := NewKilochat(int(limit))
 
     for {
         messages, err := kg.tdlib.GetChatHistory(&tdlib.GetChatHistoryRequest{
@@ -36,8 +45,8 @@ func GetChat(id int64, limit int32) {
         }
 
         for _, msg := range messages.Messages {
-            msgs[msg.Id] = msg
-            positions = append(positions, msg.Id)
+            chat.Messages[msg.Id] = msg
+            chat.Positions = append(chat.Positions, msg.Id)
         }
 
         start += messages.Messages[len(messages.Messages)-1].Id
@@ -46,13 +55,13 @@ func GetChat(id int64, limit int32) {
         if limit < 1 { break }
     }
 
-    for _, msg := range msgs {
+    for _, msg := range chat.Messages{
         reply := msg.ReplyTo
         if reply == nil { continue }
         switch r := reply.(type){
         case *tdlib.MessageReplyToMessage:
 
-            if _, ok := msgs[r.MessageId]; ok { continue }
+            if _, ok := chat.Messages[r.MessageId]; ok { continue }
             m, err := kg.tdlib.GetMessage(&tdlib.GetMessageRequest{
                 ChatId: r.ChatId,
                 MessageId: r.MessageId,
@@ -62,12 +71,11 @@ func GetChat(id int64, limit int32) {
                 log.Println("Coun't get Message reply...")
             }
 
-            msgs[m.Id] = m
+            chat.Messages[m.Id] = m
         }
     }
 
-
-    printChatHistory(msgs, positions)
+    return chat
 }
 
 func printChatHistory(msgs map[int64]*tdlib.Message, positions []int64) {
