@@ -5,22 +5,23 @@ import (
 	"log"
 
 	tdlib "github.com/zelenin/go-tdlib/client"
+    . "github.com/butbkadrug/kilogram/internal/models"
 )
 
 func ForwardMessage(source, dest int64, messages []int64) {
 
     kg := GetChats(true)
 
-    lsr := kg.tdlib.GetListener()
+    lsr := kg.Tdlib.GetListener()
 
     defer lsr.Close()
 
-    kg.waitgroup.Add(1)
+    kg.Waitgroup.Add(1)
 
     go updateHandler(kg, lsr)
 
     if dest == 0 {
-        me, err := kg.tdlib.GetMe()
+        me, err := kg.Tdlib.GetMe()
 
         if err != nil {
             log.Fatal("Destenation chat id not provided. Forwardig to saved messages faild too. aborting...")
@@ -30,7 +31,7 @@ func ForwardMessage(source, dest int64, messages []int64) {
 
 
     if len(messages) < 1 {
-        chat, err := kg.tdlib.GetChat(&tdlib.GetChatRequest{ChatId: source})
+        chat, err := kg.Tdlib.GetChat(&tdlib.GetChatRequest{ChatId: source})
 
         if err != nil {
             log.Fatalf("Forwarding faild! ERROR: %s", err)
@@ -46,7 +47,7 @@ func ForwardMessage(source, dest int64, messages []int64) {
         messages = append(messages, lastMessage.Id)
     }
 
-    fmsgs, err := kg.tdlib.ForwardMessages(&tdlib.ForwardMessagesRequest{
+    fmsgs, err := kg.Tdlib.ForwardMessages(&tdlib.ForwardMessagesRequest{
         ChatId: dest,
         FromChatId: source,
         MessageIds: messages,
@@ -61,14 +62,14 @@ func ForwardMessage(source, dest int64, messages []int64) {
         log.Fatal("Can't forward messages: ", err)
     }
 
-    kg.waitgroup.Wait()
+    kg.Waitgroup.Wait()
 
     fmt.Printf("Forwared %d message(s)", fmsgs.TotalCount)
 }
 
 func updateHandler(kg *Kilogram, l *tdlib.Listener) {
     fmt.Printf("Waiting for the message to be forwarder...")
-    defer kg.waitgroup.Done()
+    defer kg.Waitgroup.Done()
     for update := range l.Updates {
         switch u := update.(type){
         case *tdlib.UpdateMessageSendSucceeded:

@@ -5,15 +5,16 @@ import (
 	"log"
 
 	tdlib "github.com/zelenin/go-tdlib/client"
+    . "github.com/butbkadrug/kilogram/internal/models"
 )
 
 func SendTextMessage(dest int64, text string) {
 
     kg := GetChats(true)
 
-    kg.waitgroup.Add(1)
+    kg.Waitgroup.Add(1)
 
-    l := kg.tdlib.GetListener()
+    l := kg.Tdlib.GetListener()
 
     go handleSendMessageUpdates(kg, l)
 
@@ -28,7 +29,7 @@ func SendTextMessage(dest int64, text string) {
     }
 
 
-    _, err := kg.tdlib.SendMessage(&tdlib.SendMessageRequest{
+    _, err := kg.Tdlib.SendMessage(&tdlib.SendMessageRequest{
         ChatId: dest,
         InputMessageContent: content,
         ReplyMarkup: nil,
@@ -43,11 +44,11 @@ func SendTextMessage(dest int64, text string) {
         log.Fatal("Failed to send the message: ", err)
     }
 
-    kg.waitgroup.Wait()
+    kg.Waitgroup.Wait()
 }
 
 func handleSendMessageUpdates(kg *Kilogram, l *tdlib.Listener) {
-    defer kg.waitgroup.Done()
+    defer kg.Waitgroup.Done()
 
     for update := range l.Updates {
 

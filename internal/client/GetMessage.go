@@ -12,7 +12,7 @@ func GetMessage(cid, mid int64) {
     kg := GetChats(false)
 
 
-    msg, err := kg.tdlib.GetMessage(&tdlib.GetMessageRequest{
+    msg, err := kg.Tdlib.GetMessage(&tdlib.GetMessageRequest{
         ChatId: cid,
         MessageId: mid,
     })

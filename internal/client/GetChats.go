@@ -3,6 +3,7 @@ package client
 import (
 	"fmt"
 	tdlib "github.com/zelenin/go-tdlib/client"
+    . "github.com/butbkadrug/kilogram/internal/models"
 )
 
 
@@ -12,8 +13,8 @@ func GetChats(all bool) *Kilogram {
 
     kg := NewKilogram()
 
-    listener := kg.tdlib.GetListener()
-    kg.waitgroup.Add(1)
+    listener := kg.Tdlib.GetListener()
+    kg.Waitgroup.Add(1)
     go handleUpdates(kg, listener)
 
 
@@ -25,14 +26,14 @@ func GetChats(all bool) *Kilogram {
     }
 
     for {
-        _, err := kg.tdlib.LoadChats(r)
+        _, err := kg.Tdlib.LoadChats(r)
         if err != nil {
             break
         }
     }
 
     for {
-        _, err := kg.tdlib.LoadChats(&tdlib.LoadChatsRequest{
+        _, err := kg.Tdlib.LoadChats(&tdlib.LoadChatsRequest{
             ChatList: &tdlib.ChatListArchive{},
             Limit: 1,
         })
@@ -43,7 +44,7 @@ func GetChats(all bool) *Kilogram {
     }
 
 
-    kg.waitgroup.Wait()
+    kg.Waitgroup.Wait()
 
     return kg
 }
@@ -71,7 +72,7 @@ func handleUpdates(kilogram *Kilogram, l *tdlib.Listener) {
         }
     }
 
-    kilogram.waitgroup.Done()
+    kilogram.Waitgroup.Done()
 }
 
 func PrintChats(chats map[int64]*tdlib.Chat, all bool) {
