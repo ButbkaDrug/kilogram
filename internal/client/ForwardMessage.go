@@ -8,6 +8,10 @@ import (
     . "github.com/butbkadrug/kilogram/internal/models"
 )
 
+// TODO:
+// 1. I want to return new message, to make it possible to chain this command
+//    with get chat, or get message. And any other message in fact
+
 func ForwardMessage(source, dest int64, messages []int64) {
 
     kg := GetChats(true)

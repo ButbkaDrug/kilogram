@@ -26,7 +26,7 @@ func NewClient() *tdlib.Client {
 		UseTestDc:              false,
 		DatabaseDirectory:      filepath.Join(".tdlib", "database"),
 		FilesDirectory:         filepath.Join(".tdlib", "files"),
-		UseFileDatabase:        true,
+		UseFileDatabase:        false,
 		UseChatInfoDatabase:    false,
 		UseMessageDatabase:     false,
 		UseSecretChats:         false,
@@ -36,7 +36,7 @@ func NewClient() *tdlib.Client {
 		DeviceModel:            "Server",
 		SystemVersion:          "1.0.0",
 		ApplicationVersion:     "1.0.0",
-		EnableStorageOptimizer: true,
+		EnableStorageOptimizer: false,
 		IgnoreFileNames:        false,
 	}
 

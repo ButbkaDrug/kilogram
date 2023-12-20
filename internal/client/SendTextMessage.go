@@ -8,6 +8,13 @@ import (
     . "github.com/butbkadrug/kilogram/internal/models"
 )
 
+// TODO:
+// 1. I want to be able to pipe the output of a command as a text for the message -
+// 2. Make the file flag work -
+// 3. Return a newly created message to make the command chainable +
+
+// Sends a text message to a chat specified as dest
+// returns a newly created message
 func SendTextMessage(dest int64, text string) {
 
     kg := GetChats(true)
@@ -26,6 +33,17 @@ func SendTextMessage(dest int64, text string) {
         Text: formattedText,
         DisableWebPagePreview: true,
         ClearDraft: true,
+    }
+
+    if dest == 0 {
+
+        me, err := kg.Tdlib.GetMe()
+
+        if err != nil {
+            log.Fatal("Destination id is not provided. Can't get self id ether, aborting: ", err)
+        }
+
+        dest = me.Id
     }
 
 
@@ -56,7 +74,7 @@ func handleSendMessageUpdates(kg *Kilogram, l *tdlib.Listener) {
         case *tdlib.UpdateNewChat:
             kg.Chats[u.Chat.Id] = u.Chat
         case *tdlib.UpdateMessageSendSucceeded:
-            fmt.Println("Message successfully sent!")
+            fmt.Printf("-d %d %d", u.Message.ChatId, u.Message.Id)
             return
         case *tdlib.UpdateMessageSendFailed:
             fmt.Println("Failed to send the message!")

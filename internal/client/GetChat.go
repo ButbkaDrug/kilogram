@@ -9,6 +9,12 @@ import (
 
 
 
+// TODO:
+// 1. To make a Open Chat request when getting the chat. And make getting withou
+//    viewing optinal
+
+
+
 
 
 // Fetches messeges for the chat with specified id
