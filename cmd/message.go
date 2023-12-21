@@ -4,6 +4,7 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"bufio"
 	"log"
 	"os"
 	"strings"
@@ -14,7 +15,7 @@ import (
 
 var(
     file string
-    text string
+    msg string
 )
 
 // messageCmd represents the message command
@@ -28,24 +29,23 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+        var text string
 
-        text = strings.Join(args, " ")
-
-        if file != "" {
-
-            bytes, err := os.ReadFile(file)
-
-            if err != nil {
-                log.Fatal(err)
-            }
-
-            text = string(bytes)
-
+        if msg != "" {
+            text = msg
+        } else if file != "" {
+            text = readFromFile(file)
+        } else if m := readFromStdin(); m != "" {
+            text = m
+        } else if len(args) > 0 {
+            text = strings.Join(args, " ")
         }
+
 
         if len(text) < 1 {
             log.Fatal("Message cannot be empty!")
         }
+
         client.SendTextMessage(dest, text)
 	},
 }
@@ -75,6 +75,14 @@ func init() {
         "Path to text file to send as a message",
     )
 
+    messageCmd.Flags().StringVarP(
+        &msg,
+        "message",
+        "m",
+        "",
+        "Message to be sent.",
+    )
+
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
@@ -84,4 +92,38 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// messageCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+
+
+func readFromStdin() string {
+
+        var text string
+
+        scanner := bufio.NewScanner(os.Stdin)
+
+        for scanner.Scan() {
+
+            text += scanner.Text()
+            text += "\n"
+
+        }
+
+        return text
+}
+
+func readFromFile(fp string) string {
+
+        var text string
+
+        bytes, err := os.ReadFile(fp)
+
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        text = string(bytes)
+
+
+    return text
 }

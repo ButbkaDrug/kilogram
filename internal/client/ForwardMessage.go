@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	. "github.com/butbkadrug/kilogram/internal/models"
 	tdlib "github.com/zelenin/go-tdlib/client"
-    . "github.com/butbkadrug/kilogram/internal/models"
 )
 
 // TODO:
@@ -13,6 +13,8 @@ import (
 //    with get chat, or get message. And any other message in fact
 
 func ForwardMessage(source, dest int64, messages []int64) {
+
+    var output []any
 
     kg := GetChats(true)
 
@@ -45,7 +47,7 @@ func ForwardMessage(source, dest int64, messages []int64) {
 
         lastMessage := chat.LastMessage
         if lastMessage == nil {
-            log.Fatal("Message id not provided! No last message found ether")
+            log.Fatal("Message id not provided! No last message found ether! Aborting...")
         }
 
         messages = append(messages, lastMessage.Id)
@@ -68,7 +70,13 @@ func ForwardMessage(source, dest int64, messages []int64) {
 
     kg.Waitgroup.Wait()
 
-    fmt.Printf("Forwared %d message(s)", fmsgs.TotalCount)
+    output = append(output, dest)
+
+    for _, msg := range fmsgs.Messages {
+        output = append(output, msg.Id)
+    }
+
+    fmt.Print(output...)
 }
 
 func updateHandler(kg *Kilogram, l *tdlib.Listener) {
@@ -77,7 +85,6 @@ func updateHandler(kg *Kilogram, l *tdlib.Listener) {
     for update := range l.Updates {
         switch u := update.(type){
         case *tdlib.UpdateMessageSendSucceeded:
-            fmt.Print("Message successfully forwarded!\n")
             return
         case *tdlib.UpdateMessageSendFailed:
             fmt.Printf("Failed to forward the message! Error code: %d\n", u.ErrorCode)
