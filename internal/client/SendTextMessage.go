@@ -12,7 +12,7 @@ import (
 // prints Chat ID and Message ID of the newly created message
 func SendTextMessage(dest int64, text string) {
 
-    kg := GetChats(true)
+    kg := GetChats()
 
     kg.Waitgroup.Add(1)
 

@@ -12,12 +12,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var limit int32
+var(
+    limit int32
+)
 
 // chatCmd represents the chat command
 var chatCmd = &cobra.Command{
 	Use:   "chat",
-    Args: cobra.ExactArgs(1),
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -26,12 +27,20 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-        id, err := strconv.Atoi(args[0])
+        var id int64
 
-        if err != nil {
-            log.Fatal(err)
+        if source >= 0 {
+            id = source
+        } else if len(args) > 0 {
+            i, err := strconv.Atoi(args[0])
+            if err != nil {
+                log.Fatal(err)
+            }
+
+            id = int64(i)
         }
-        kc := client.GetChat(int64(id), limit)
+
+        kc := client.GetChat(id, limit)
         render.PrintChat(kc)
 	},
 }
@@ -45,6 +54,14 @@ func init() {
         "l",
         1,
         "Specify number of messages to load",
+    )
+
+    chatCmd.Flags().Int64VarP(
+        &source,
+        "source",
+        "s",
+        -1,
+        "Chat id to be loaded.",
     )
 
 	// Here you will define your flags and configuration settings.

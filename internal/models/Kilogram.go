@@ -9,7 +9,7 @@ type Kilogram struct {
     Tdlib *tdlib.Client
     Waitgroup *sync.WaitGroup
     Chats map[int64]*tdlib.Chat
-    Positions map[tdlib.JsonInt64]int64
+    Positions []int64
     Users map[int64]*tdlib.User
     Messages map[int64]*tdlib.Message
 }

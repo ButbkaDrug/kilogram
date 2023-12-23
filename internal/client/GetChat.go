@@ -23,8 +23,20 @@ func GetChat(id int64, limit int32) *Kilochat {
 
     var start int64
 
-    kg := GetChats(true)
+    kg := GetChats()
     chat := NewKilochat(int(limit))
+
+
+    if id == 0 {
+
+        me, err := kg.Tdlib.GetMe()
+
+        if err != nil {
+            log.Fatal("Can't load the chat: ", err)
+        }
+
+        id = me.Id
+    }
 
     for {
         messages, err := kg.Tdlib.GetChatHistory(&tdlib.GetChatHistoryRequest{
@@ -39,10 +51,18 @@ func GetChat(id int64, limit int32) *Kilochat {
             log.Fatal(err)
         }
 
+        if len(messages.Messages) < 1 { break }
+
+
         for _, msg := range messages.Messages {
+
+
+            if msg == nil { continue }
+
             chat.Messages[msg.Id] = msg
             chat.Positions = append(chat.Positions, msg.Id)
         }
+
 
         start += messages.Messages[len(messages.Messages)-1].Id
         limit -= messages.TotalCount
@@ -63,7 +83,7 @@ func GetChat(id int64, limit int32) *Kilochat {
             })
 
             if err != nil {
-                log.Println("Coun't get Message reply...")
+                log.Println("Coun't get Message reply: ", err)
             }
 
 

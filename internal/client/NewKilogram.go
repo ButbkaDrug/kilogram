@@ -12,7 +12,7 @@ func NewKilogram () *Kilogram {
         Waitgroup: &sync.WaitGroup{},
         Chats: make(map[int64]*tdlib.Chat, 100),
         Users: make(map[int64]*tdlib.User, 100),
-        Positions: make(map[tdlib.JsonInt64]int64),
+        Positions: make([]int64, 100),
         Messages: make(map[int64]*tdlib.Message),
     }
 }

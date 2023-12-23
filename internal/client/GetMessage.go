@@ -9,7 +9,7 @@ import (
 
 func GetMessage(cid, mid int64) {
 
-    kg := GetChats(false)
+    kg := GetChats()
 
 
     msg, err := kg.Tdlib.GetMessage(&tdlib.GetMessageRequest{

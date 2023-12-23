@@ -2,14 +2,17 @@ package client
 
 import (
 	"fmt"
-	tdlib "github.com/zelenin/go-tdlib/client"
-    . "github.com/butbkadrug/kilogram/internal/models"
-)
+	"os"
+	"sort"
 
+	. "github.com/butbkadrug/kilogram/internal/models"
+	tdlib "github.com/zelenin/go-tdlib/client"
+)
 
 // Sends a LoadChats request to tdlib.
 // Returns a pointer to the Kilogram instance
-func GetChats(all bool) *Kilogram {
+func GetChats() *Kilogram {
+
 
     kg := NewKilogram()
 
@@ -44,9 +47,33 @@ func GetChats(all bool) *Kilogram {
     }
 
 
+
     kg.Waitgroup.Wait()
 
+
     return kg
+}
+
+func sortChats(c map[int64]*tdlib.Chat, p map[tdlib.JsonInt64]int64) []*tdlib.Chat {
+    var order []tdlib.JsonInt64
+    var chats []*tdlib.Chat
+
+    for pos := range p{
+
+        order = append(order, pos)
+
+    }
+    sort.Slice(order, func(i, j int) bool {return i < j})
+
+    for _, i := range order {
+
+        id := p[i]
+
+        chats = append(chats, c[id])
+
+    }
+
+    return chats
 }
 
 func handleUpdates(kilogram *Kilogram, l *tdlib.Listener) {
@@ -62,30 +89,19 @@ func handleUpdates(kilogram *Kilogram, l *tdlib.Listener) {
             kilogram.Chats[upd.Chat.Id] = upd.Chat
         case *tdlib.UpdateChatPosition:
             // do something
-            kilogram.Positions[upd.Position.Order] = upd.ChatId
+            kilogram.Positions = append(kilogram.Positions, upd.ChatId)
         case *tdlib.UpdateSupergroup:
             // groups = append(groups, upd.Supergroup)
         case *tdlib.UpdateChatReadInbox:
             kilogram.Chats[upd.ChatId].UnreadCount = upd.UnreadCount
         case *tdlib.UpdateChatLastMessage:
+            if _, ok := kilogram.Chats[upd.ChatId]; !ok {
+                fmt.Fprintf(os.Stderr, "Chat not found! %v", upd)
+                continue
+            }
             kilogram.Chats[upd.ChatId].LastMessage = upd.LastMessage
         }
     }
 
     kilogram.Waitgroup.Done()
-}
-
-func PrintChats(chats map[int64]*tdlib.Chat, all bool) {
-
-    for id, chat := range chats {
-
-        if !all && chat.UnreadCount < 1 { continue }
-
-        fmt.Printf("%d\t%s\t%d\t", id, chat.Title, chat.UnreadCount)
-
-        if chat.LastMessage == nil { continue }
-
-        fmt.Printf("%d\n", chat.LastMessage.Id)
-    }
-
 }

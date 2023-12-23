@@ -3,20 +3,33 @@ package client
 import (
 	"fmt"
 	"log"
+	"os"
 
 	. "github.com/butbkadrug/kilogram/internal/models"
 	tdlib "github.com/zelenin/go-tdlib/client"
 )
 
 // TODO:
-// 1. I want to return new message, to make it possible to chain this command
-//    with get chat, or get message. And any other message in fact
+// Implement LIMIT functionality
 
-func ForwardMessage(source, dest int64, messages []int64) {
+type ForwardMessageParams struct {
+    // Chat id the messages belong to
+    Source int64
+    // Destination chat id, where you want to send your messages
+    Dest int64
+    // Ids of the messages to be forwarded.
+    // If no IDs provided, last message found in the chat will be forwarded
+    Messages []int64
+    // If no id provided, number of messages to forward starting from the last
+    // message found in the chat
+    Limit int32
+}
+
+func ForwardMessage(p *ForwardMessageParams) {
 
     var output []any
 
-    kg := GetChats(true)
+    kg := GetChats()
 
     lsr := kg.Tdlib.GetListener()
 
@@ -26,37 +39,37 @@ func ForwardMessage(source, dest int64, messages []int64) {
 
     go updateHandler(kg, lsr)
 
-    if dest == 0 {
+    if p.Dest == 0 {
         me, err := kg.Tdlib.GetMe()
 
         if err != nil {
             log.Fatal("Destenation chat id not provided. Forwardig to saved messages faild too. aborting...")
         }
-        dest = me.Id
+        p.Dest = me.Id
     }
 
 
-    if len(messages) < 1 {
-        chat, err := kg.Tdlib.GetChat(&tdlib.GetChatRequest{ChatId: source})
+    if len(p.Messages) < 1 {
+        chat, err := kg.Tdlib.GetChat(&tdlib.GetChatRequest{ChatId: p.Source})
 
         if err != nil {
             log.Fatalf("Forwarding faild! ERROR: %s", err)
         }
 
-        source = chat.Id
+        p.Source = chat.Id
 
         lastMessage := chat.LastMessage
         if lastMessage == nil {
             log.Fatal("Message id not provided! No last message found ether! Aborting...")
         }
 
-        messages = append(messages, lastMessage.Id)
+        p.Messages = append(p.Messages, lastMessage.Id)
     }
 
     fmsgs, err := kg.Tdlib.ForwardMessages(&tdlib.ForwardMessagesRequest{
-        ChatId: dest,
-        FromChatId: source,
-        MessageIds: messages,
+        ChatId: p.Dest,
+        FromChatId: p.Source,
+        MessageIds: p.Messages,
         SendCopy: false,
         Options: nil,
         OnlyPreview: false,
@@ -70,9 +83,10 @@ func ForwardMessage(source, dest int64, messages []int64) {
 
     kg.Waitgroup.Wait()
 
-    output = append(output, dest)
+    output = append(output, p.Dest)
 
     for _, msg := range fmsgs.Messages {
+        if msg == nil { continue }
         output = append(output, msg.Id)
     }
 
@@ -80,17 +94,16 @@ func ForwardMessage(source, dest int64, messages []int64) {
 }
 
 func updateHandler(kg *Kilogram, l *tdlib.Listener) {
-    fmt.Printf("Waiting for the message to be forwarder...")
     defer kg.Waitgroup.Done()
     for update := range l.Updates {
         switch u := update.(type){
         case *tdlib.UpdateMessageSendSucceeded:
             return
         case *tdlib.UpdateMessageSendFailed:
-            fmt.Printf("Failed to forward the message! Error code: %d\n", u.ErrorCode)
+            fmt.Fprintf(os.Stderr, "Failed to forward the message! Error code: %d\n", u.ErrorCode)
             return
         case *tdlib.UpdateDeleteMessages:
-            fmt.Print("Delete Message update...!\n")
+            fmt.Fprint(os.Stderr, "Delete Message update...!\n")
             return
         }
     }
