@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var params *render.RenderChatsParams
+var renderChatsParams *render.RenderChatsParams
 
 // chatsCmd represents the chats command
 var chatsCmd = &cobra.Command{
@@ -23,15 +23,15 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
         kg := client.GetChats()
-        params.Order = kg.Positions
-        render.RenderChats(kg.Chats, params)
+        renderChatsParams.Order = kg.Positions
+        render.RenderChats(kg.Chats, renderChatsParams)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(chatsCmd)
 
-    params = &render.RenderChatsParams{
+    renderChatsParams = &render.RenderChatsParams{
         PrintAll: false,
         Verbose: false,
     }
@@ -46,7 +46,7 @@ func init() {
 	// is called directly, e.g.:
 	// chatsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
     chatsCmd.Flags().BoolVarP(
-        &params.PrintAll,
+        &renderChatsParams.PrintAll,
         "all",
         "a",
         false,
@@ -54,7 +54,7 @@ func init() {
     )
 
     chatsCmd.Flags().BoolVarP(
-        &params.Verbose,
+        &renderChatsParams.Verbose,
         "verbose",
         "v",
         false,
@@ -62,7 +62,7 @@ func init() {
     )
 
     chatsCmd.Flags().IntVarP(
-        &params.Limit,
+        &renderChatsParams.Limit,
         "limit",
         "l",
         10,
@@ -70,7 +70,7 @@ func init() {
     )
 
     chatsCmd.Flags().IntVarP(
-        &params.Offset,
+        &renderChatsParams.Offset,
         "offset",
         "o",
         0,

@@ -64,13 +64,15 @@ func PrintChat(chat *Kilochat){
             default:
                 reply = "Unknown message..."
             }
+
             reply = replyStyle.Render(reply)
+            body += reply + "\n"
         }
 
 
 
 
-        body = getMessageText(msg)
+        body += getMessageText(msg)
         body = bodyStyle.Render(body)
         message := lg.JoinVertical(
             lg.Left,
