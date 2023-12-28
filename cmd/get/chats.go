@@ -1,7 +1,7 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 */
-package cmd
+package get
 
 import (
 	"github.com/butbkadrug/kilogram/internal/client"
@@ -29,7 +29,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(chatsCmd)
+	getCmd.AddCommand(chatsCmd)
 
     renderChatsParams = &render.RenderChatsParams{
         PrintAll: false,
@@ -65,7 +65,7 @@ func init() {
         &renderChatsParams.Limit,
         "limit",
         "l",
-        10,
+        0,
         "How many entries you want to print. Defaults to 10",
     )
 

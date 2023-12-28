@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"fmt"
+    "github.com/butbkadrug/kilogram/cmd"
 
 	"github.com/spf13/cobra"
 )
@@ -26,7 +27,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(newCmd)
+	cmd.RootCmd.AddCommand(newCmd)
 
 	// Here you will define your flags and configuration settings.
 

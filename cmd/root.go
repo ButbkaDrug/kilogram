@@ -5,12 +5,11 @@ package cmd
 
 import (
 	"os"
-
 	"github.com/spf13/cobra"
 )
 
 // rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:   "kilogram",
 	Short: "Kilogram is a telegram cli tool that created mostly just for fun",
 	Long: `Kilogram makes a request to a tdlib server and prints the results
@@ -24,7 +23,7 @@ to be used like a typical messenging app. But more for is "hacky" way.`,
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	err := rootCmd.Execute()
+	err := RootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}
@@ -39,7 +38,6 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 

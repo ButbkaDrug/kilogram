@@ -4,16 +4,16 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"bufio"
 	"log"
-	"os"
 	"strings"
 
 	"github.com/butbkadrug/kilogram/internal/client"
+	"github.com/butbkadrug/kilogram/internal/utils"
 	"github.com/spf13/cobra"
 )
 
 var(
+    dest int64
     file string
     msg string
 )
@@ -30,12 +30,14 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
         var text string
+        var err error
 
         if msg != "" {
             text = msg
         } else if file != "" {
-            text = readFromFile(file)
-        } else if m := readFromStdin(); m != "" {
+            text, err = utils.ReadFile(file)
+            if err != nil {log.Fatal("Can't read the file: ", err)}
+        } else if m := utils.ReadStdin(); m != "" {
             text = m
         } else if len(args) > 0 {
             text = strings.Join(args, " ")
@@ -82,48 +84,4 @@ func init() {
         "",
         "Message to be sent.",
     )
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// messageCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// messageCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-
-
-func readFromStdin() string {
-
-        var text string
-
-        scanner := bufio.NewScanner(os.Stdin)
-
-        for scanner.Scan() {
-
-            text += scanner.Text()
-            text += "\n"
-
-        }
-
-        return text
-}
-
-func readFromFile(fp string) string {
-
-        var text string
-
-        bytes, err := os.ReadFile(fp)
-
-        if err != nil {
-            log.Fatal(err)
-        }
-
-        text = string(bytes)
-
-
-    return text
 }

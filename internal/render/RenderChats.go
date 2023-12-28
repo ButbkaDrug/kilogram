@@ -95,7 +95,6 @@ func renderChatsVerbose(chats []*tdlib.Chat){
             title string
             counter string
             message string
-            sep = "|"
         )
 
         id = shrinkTextLine(fmt.Sprint(chat.Id), firstColWidth)
@@ -116,15 +115,10 @@ func renderChatsVerbose(chats []*tdlib.Chat){
 
         row += lg.JoinHorizontal(
             lg.Left,
-            sep,
             id,
-            sep,
             title,
-            sep,
             counter,
-            sep,
             message,
-            sep,
         )
         output += row + "\n"
     }

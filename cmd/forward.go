@@ -5,17 +5,16 @@ package cmd
 
 import (
 	"log"
-	"strconv"
-	"strings"
-
+    "strings"
+    "github.com/butbkadrug/kilogram/internal/utils"
 	"github.com/butbkadrug/kilogram/internal/client"
 	"github.com/spf13/cobra"
 )
 
 var (
+    limit int32
     source int64
     dest int64
-    messageIds []int64
 )
 
 // forwardCmd represents the forward command
@@ -37,13 +36,13 @@ Will forward messages with ids 111, 222 and 333 from chat with id 123456789 to S
 	Run: func(cmd *cobra.Command, args []string) {
 
 
-        if pipe := readFromStdin(); pipe != "" {
+        if pipe := utils.ReadStdin(); pipe != "" {
             pargs := strings.Split(pipe, " ")
             args = append(args, pargs...)
         }
 
 
-        ids, err := argsToIds(args)
+        ids, err := utils.ArgsToIds(args)
 
         if err != nil {
             log.Fatal("Error converting args: ", err)
@@ -64,7 +63,7 @@ Will forward messages with ids 111, 222 and 333 from chat with id 123456789 to S
 }
 
 func init() {
-	rootCmd.AddCommand(forwardCmd)
+	RootCmd.AddCommand(forwardCmd)
 
     forwardCmd.Flags().Int64VarP(
         &source,
@@ -94,31 +93,4 @@ func init() {
         1,
         "If no message IDs provided. How many messages to forward, starting from the last message fround in the chat",
     )
-
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// forwardCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// forwardCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-func argsToIds(args []string) ([]int64, error) {
-    var ids []int64
-        for _, arg := range args {
-            arg = strings.Trim(arg, "\n\t")
-            if arg == "" { continue }
-            id, err := strconv.Atoi(arg)
-
-            if err != nil {
-                return ids, err
-            }
-
-            ids = append(ids, int64(id))
-        }
-    return ids, nil
 }

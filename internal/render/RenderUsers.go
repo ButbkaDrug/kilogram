@@ -31,14 +31,19 @@ func RenderUsers(users []*tdlib.User, params *RenderUsersParams) {
 }
 
 func VerboseRender(user *tdlib.User) string{
-    var name, phone, status string
+    var name, id, phone, status string
 
     var nameStyle = lg.NewStyle().Bold(true).Width(30)
     var phoneStyle = lg.NewStyle().Foreground(lg.Color(color15)).Width(15)
+    var idStyle = lg.NewStyle().Bold(true).Background(lg.Color(color4))
     var statusStyle = lg.NewStyle().Foreground(lg.Color(color10))
 
     name = formatName(user)
     name = nameStyle.Render(name)
+
+    id = fmt.Sprintf("%d ", user.Id)
+    id = idStyle.Render(id)
+
 
     phone = phoneStyle.Render(user.PhoneNumber)
 
@@ -52,6 +57,7 @@ func VerboseRender(user *tdlib.User) string{
         lg.Left,
         name,
         phone,
+        id,
         status,
     )+ "\n" + line
 

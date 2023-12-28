@@ -1,13 +1,15 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
-*/
-package cmd
+/* Copyright © 2023 NAME HERE <EMAIL ADDRESS> */
+package get
 
 import (
 	"fmt"
-
+    "github.com/butbkadrug/kilogram/cmd"
 	"github.com/spf13/cobra"
+)
+
+var(
+    source int64
+    limit int32
 )
 
 // getCmd represents the get command
@@ -26,7 +28,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(getCmd)
+	cmd.RootCmd.AddCommand(getCmd)
 
 	// Here you will define your flags and configuration settings.
 
