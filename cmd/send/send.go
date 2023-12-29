@@ -2,10 +2,11 @@
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 
 */
-package cmd
+package send
 
 import (
 	"fmt"
+    . "github.com/butbkadrug/kilogram/cmd"
 
 	"github.com/spf13/cobra"
 )
