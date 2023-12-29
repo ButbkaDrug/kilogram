@@ -37,8 +37,8 @@ to quickly create a Cobra application.`,
         } else if file != "" {
             text, err = utils.ReadFile(file)
             if err != nil {log.Fatal("Can't read the file: ", err)}
-        } else if m := utils.ReadStdin(); m != "" {
-            text = m
+        } else if m := utils.ReadStdin(); len(m) > 0 {
+            text = strings.Join(m, " ")
         } else if len(args) > 0 {
             text = strings.Join(args, " ")
         }

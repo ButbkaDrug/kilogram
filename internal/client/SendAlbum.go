@@ -8,7 +8,7 @@ import (
 	tdlib "github.com/zelenin/go-tdlib/client"
 )
 
-func SendMessage(r *tdlib.SendMessageRequest) (*tdlib.Message, error){
+func SendAlbum(r *tdlib.SendMessageAlbumRequest) (*tdlib.Messages, error){
 
 
 
@@ -58,12 +58,5 @@ func SendMessage(r *tdlib.SendMessageRequest) (*tdlib.Message, error){
 
     }(kg, l)
 
-
-    msg, err := kg.Tdlib.SendMessage(r)
-
-    if err != nil {
-        return nil, err
-    }
-
-    return msg, nil
+    return kg.Tdlib.SendMessageAlbum(r)
 }

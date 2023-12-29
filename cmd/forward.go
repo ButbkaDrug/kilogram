@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"log"
-    "strings"
     "github.com/butbkadrug/kilogram/internal/utils"
 	"github.com/butbkadrug/kilogram/internal/client"
 	"github.com/spf13/cobra"
@@ -36,11 +35,7 @@ Will forward messages with ids 111, 222 and 333 from chat with id 123456789 to S
 	Run: func(cmd *cobra.Command, args []string) {
 
 
-        if pipe := utils.ReadStdin(); pipe != "" {
-            pargs := strings.Split(pipe, " ")
-            args = append(args, pargs...)
-        }
-
+        args = append(args, utils.ReadStdin()...)
 
         ids, err := utils.ArgsToIds(args)
 

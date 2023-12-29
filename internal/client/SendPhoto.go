@@ -1,6 +1,7 @@
 package client
 
 import (
+	"fmt"
 	"os"
 
 	tdlib "github.com/zelenin/go-tdlib/client"
@@ -8,46 +9,47 @@ import (
 
 type SendPhotoParams struct {
     ChatId int64
-    Path string
+    Files []string
     Width, Height int32
     Caption string
     Spoiler bool
 }
 
-func SendPhoto(p *SendPhotoParams) (*tdlib.Message, error) {
+func SendPhoto(p *SendPhotoParams) (*tdlib.Messages, error){
 
-    var msg *tdlib.Message
     var err error
+    var content []tdlib.InputMessageContent
 
-    _, err = os.Stat(p.Path)
+    for _, file := range p.Files {
+        if _, err = os.Stat(file); err != nil {
+            fmt.Fprintln(os.Stderr, err)
+            continue
+        }
 
-    if err != nil {
-        return msg, err
+        inputFile := &tdlib.InputFileLocal{Path: file}
+
+        c := &tdlib.FormattedText{
+            Text: p.Caption,
+            Entities: nil,
+        }
+
+        content = append(content, &tdlib.InputMessagePhoto{
+            Photo: inputFile,
+            Thumbnail: nil,
+            AddedStickerFileIds: nil,
+            Width: p.Width,
+            Height: p.Height,
+            Caption: c,
+            HasSpoiler: p.Spoiler,
+        })
     }
 
-    inputFile := &tdlib.InputFileLocal{Path: p.Path}
-
-    c := &tdlib.FormattedText{
-        Text: p.Caption,
-        Entities: nil,
-    }
-
-    content := &tdlib.InputMessagePhoto{
-        Photo: inputFile,
-        Thumbnail: nil,
-        AddedStickerFileIds: nil,
-        Width: p.Width,
-        Height: p.Height,
-        Caption: c,
-        HasSpoiler: p.Spoiler,
-    }
-
-    return SendMessage(&tdlib.SendMessageRequest{
+    return SendAlbum(&tdlib.SendMessageAlbumRequest{
         ChatId: p.ChatId,
+        OnlyPreview: false,
+        MessageThreadId: 0,
         ReplyTo: nil,
         Options: nil,
-        MessageThreadId: 0,
-        ReplyMarkup: nil,
-        InputMessageContent: content,
+        InputMessageContents: content,
     })
 }

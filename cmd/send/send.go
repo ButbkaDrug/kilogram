@@ -6,7 +6,7 @@ package send
 
 import (
 	"fmt"
-    . "github.com/butbkadrug/kilogram/cmd"
+    "github.com/butbkadrug/kilogram/cmd"
 
 	"github.com/spf13/cobra"
 )
@@ -22,12 +22,14 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("send called")
+
+
+		fmt.Println("send called", args)
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(sendCmd)
+	cmd.RootCmd.AddCommand(sendCmd)
 
 	// Here you will define your flags and configuration settings.
 

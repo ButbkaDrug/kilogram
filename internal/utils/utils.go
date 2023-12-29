@@ -7,16 +7,15 @@ import(
     "strconv"
 )
 
-func ReadStdin() string {
+func ReadStdin() []string {
 
-        var text string
+        var text []string
 
         scanner := bufio.NewScanner(os.Stdin)
 
         for scanner.Scan() {
 
-            text += scanner.Text()
-            text += "\n"
+            text = append(text, scanner.Text())
 
         }
 
