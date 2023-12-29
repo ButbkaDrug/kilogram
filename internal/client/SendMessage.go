@@ -10,8 +10,6 @@ import (
 
 func SendMessage(r *tdlib.SendMessageRequest) (*tdlib.Message, error){
 
-
-
     kg := GetChats()
 
     if r.ChatId == 0 {

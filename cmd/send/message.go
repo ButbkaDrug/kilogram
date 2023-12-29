@@ -4,7 +4,8 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package send
 
 import (
-	"log"
+	"fmt"
+	"os"
 	"strings"
 
 	"github.com/butbkadrug/kilogram/internal/client"
@@ -29,14 +30,17 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
         var text string
 
-        args = append(args,  utils.ReadStdin()...)
+        stdin, err := utils.ReadStdin()
 
-
-        text = strings.Join(args, " ")
-
-        if len(text) < 1 {
-            log.Fatal("Message cannot be empty!")
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
         }
+
+
+        args = append(args,  stdin...)
+        text = strings.Join(args, "\n")
+
+
 
         client.SendTextMessage(dest, text)
 	},
@@ -50,13 +54,11 @@ func init() {
         "dest",
         "d",
         0,
-        "Chat id to send message to.(required)",
+        "Chat id to send message to(required). Pass 0 to send message to yourself.",
     )
 
-    err := messageCmd.MarkFlagRequired("dest")
-
-    if err != nil {
-        log.Fatal("Cant mark flag as required: ", err)
+    if err := messageCmd.MarkFlagRequired("dest"); err != nil {
+        fmt.Fprintln(os.Stderr, err)
+        return
     }
-
 }

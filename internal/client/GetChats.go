@@ -3,8 +3,6 @@ package client
 import (
 	"fmt"
 	"os"
-	"sort"
-
 	. "github.com/butbkadrug/kilogram/internal/models"
 	tdlib "github.com/zelenin/go-tdlib/client"
 )
@@ -54,27 +52,6 @@ func GetChats() *Kilogram {
     return kg
 }
 
-func sortChats(c map[int64]*tdlib.Chat, p map[tdlib.JsonInt64]int64) []*tdlib.Chat {
-    var order []tdlib.JsonInt64
-    var chats []*tdlib.Chat
-
-    for pos := range p{
-
-        order = append(order, pos)
-
-    }
-    sort.Slice(order, func(i, j int) bool {return i < j})
-
-    for _, i := range order {
-
-        id := p[i]
-
-        chats = append(chats, c[id])
-
-    }
-
-    return chats
-}
 
 func handleUpdates(kilogram *Kilogram, l *tdlib.Listener) {
 

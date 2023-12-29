@@ -1,25 +1,33 @@
 package utils
 
-import(
-    "os"
-    "bufio"
-    "strings"
-    "strconv"
+import (
+	"bufio"
+	"os"
+	"strconv"
+	"strings"
 )
 
-func ReadStdin() []string {
+func ReadStdin() ([]string, error) {
+    var data []string
+    var err error
 
-        var text []string
+    file, err := os.Stdin.Stat()
 
-        scanner := bufio.NewScanner(os.Stdin)
+    if err != nil {
+        return data, err
+    }
 
-        for scanner.Scan() {
 
-            text = append(text, scanner.Text())
+    if !(file.Mode() & os.ModeCharDevice == 0) { return data, nil }
 
-        }
+    scanner := bufio.NewScanner(os.Stdin)
 
-        return text
+    for scanner.Scan() {
+        data = append(data, scanner.Text())
+    }
+
+
+    return data, nil
 }
 
 func ReadFile(fp string) (string, error){

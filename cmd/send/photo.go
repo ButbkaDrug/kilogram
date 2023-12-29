@@ -24,8 +24,13 @@ Sends a photo located in a given path to saved messages
     kilogram send photo ~/Pictures/image1.jpg`,
 
 	Run: func(cmd *cobra.Command, args []string) {
+        stdin, err := utils.ReadStdin()
 
-        args = append(args, utils.ReadStdin()...)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+
+        args = append(args, stdin...)
 
         fmt.Println("Piped args: ", args)
         SendPhotoParams.Files = append(SendPhotoParams.Files, args...)

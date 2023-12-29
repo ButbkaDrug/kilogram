@@ -4,9 +4,12 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
 	"log"
-    "github.com/butbkadrug/kilogram/internal/utils"
+	"os"
+
 	"github.com/butbkadrug/kilogram/internal/client"
+	"github.com/butbkadrug/kilogram/internal/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -34,8 +37,13 @@ Will forward messages with ids 111, 222 and 333 from chat with id 123456789 to S
 
 	Run: func(cmd *cobra.Command, args []string) {
 
+        stdin, err := utils.ReadStdin()
 
-        args = append(args, utils.ReadStdin()...)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+
+        args = append(args, stdin...)
 
         ids, err := utils.ArgsToIds(args)
 
