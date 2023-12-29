@@ -34,6 +34,7 @@ func SendMessage(r *tdlib.SendMessageRequest) (*tdlib.Message, error){
     fmt.Println("Star waiting for update")
 
     go func(kg *Kilogram, l *tdlib.Listener) {
+        var count int
         defer kg.Waitgroup.Done()
 
         for update := range l.Updates {
@@ -42,6 +43,7 @@ func SendMessage(r *tdlib.SendMessageRequest) (*tdlib.Message, error){
             case *tdlib.UpdateNewChat:
                 kg.Chats[u.Chat.Id] = u.Chat
             case *tdlib.UpdateMessageSendSucceeded:
+                fmt.Println("Update Fired and we are done", count)
                 return
             case *tdlib.UpdateMessageSendFailed:
                 fmt.Fprintln(os.Stderr, "Failed to send the message!")
@@ -49,14 +51,12 @@ func SendMessage(r *tdlib.SendMessageRequest) (*tdlib.Message, error){
             case *tdlib.Error:
                 return
             case *tdlib.UpdateFile:
+                count += 1
                 size := u.File.ExpectedSize
                 fmt.Println("Upload: ", size)
-            default:
-                fmt.Println(u)
             }
         }
 
-        fmt.Println("Update Fired and we are done")
     }(kg, l)
 
 
