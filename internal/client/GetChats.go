@@ -26,23 +26,35 @@ func GetChats() *Kilogram {
         Limit: 100,
     }
 
+    var i = 0
+
     for {
         _, err := kg.Tdlib.LoadChats(r)
+        i++
         if err != nil {
             break
         }
     }
 
+    var j = 0
+
     for {
-        _, err := kg.Tdlib.LoadChats(&tdlib.LoadChatsRequest{
+        ok, err := kg.Tdlib.LoadChats(&tdlib.LoadChatsRequest{
             ChatList: &tdlib.ChatListArchive{},
             Limit: 1,
         })
+        if ok != nil {
+            fmt.Println("\n\n", ok.Type, ok.Extra, "\n\n")
+        }
+
+        j++
 
         if err != nil {
             break
         }
     }
+    fmt.Println(i, " requested main list")
+    fmt.Println(j, " requested archived list")
 
 
 
@@ -55,11 +67,13 @@ func GetChats() *Kilogram {
 
 func handleUpdates(kilogram *Kilogram, l *tdlib.Listener) {
 
-    loop:
+    // loop:
     for update := range l.Updates {
+        fmt.Printf("%v\n", update)
         switch upd := update.(type) {
         case *tdlib.Ok:
-            break loop
+            fmt.Printf("%#v\n", upd)
+            // break loop
         case *tdlib.UpdateUser:
             // kilogram.Users[upd.User.Id] = upd.User
         case *tdlib.UpdateNewChat:
@@ -77,6 +91,7 @@ func handleUpdates(kilogram *Kilogram, l *tdlib.Listener) {
                 continue
             }
             kilogram.Chats[upd.ChatId].LastMessage = upd.LastMessage
+        default:
         }
     }
 

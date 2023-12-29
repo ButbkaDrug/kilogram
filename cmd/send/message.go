@@ -42,7 +42,13 @@ to quickly create a Cobra application.`,
 
 
 
-        client.SendTextMessage(dest, text)
+        msg, err := client.SendTextMessage(dest, text)
+
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+
+        fmt.Println(msg.ChatId, msg.Id)
 	},
 }
 

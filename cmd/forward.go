@@ -46,6 +46,7 @@ Will forward messages with ids 111, 222 and 333 from chat with id 123456789 to S
         args = append(args, stdin...)
 
         ids, err := utils.ArgsToIds(args)
+        fmt.Println(ids)
 
         if err != nil {
             log.Fatal("Error converting args: ", err)
