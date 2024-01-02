@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package send
 
 import (
@@ -14,7 +11,6 @@ import (
 
 var SendPhotoParams*client.SendPhotoParams
 
-// audioCmd represents the audio command
 var photoCmd = &cobra.Command{
 	Use:   "photo",
 	Short: "Sends a image file(s) to specified chat id",

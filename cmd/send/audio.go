@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package send
 
 import (
@@ -13,7 +10,6 @@ import (
 
 var SendAudioParams *client.SendAudioParams
 
-// audioCmd represents the audio command
 var audioCmd = &cobra.Command{
 	Use:   "audio",
 	Short: "Sends an audio file to specified chat id",

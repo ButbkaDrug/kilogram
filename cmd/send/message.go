@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package send
 
 import (
@@ -17,7 +14,6 @@ var(
     dest int64
 )
 
-// messageCmd represents the message command
 var messageCmd = &cobra.Command{
 	Use:   "message",
 	Short: "A brief description of your command",
