@@ -98,7 +98,10 @@ func getMessageText(msg *tdlib.Message) string {
     case *tdlib.MessageText:
         return m.Text.Text
     case *tdlib.MessagePhoto:
-        return m.Caption.Text
+        var text string
+        text += m.Photo.Type + "\n"
+        text += m.Caption.Text + "\n"
+        return text
     default:
         return msg.Content.MessageContentType()
     }

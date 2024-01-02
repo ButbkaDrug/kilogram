@@ -4,7 +4,6 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package get
 
 import (
-	"log"
 	"strconv"
 
 	"github.com/butbkadrug/kilogram/internal/client"
@@ -15,13 +14,10 @@ import (
 // chatCmd represents the chat command
 var chatCmd = &cobra.Command{
 	Use:   "chat",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Loads history of a specified chat",
+	Long: `If you don't provied chat id, saved messages will be loaded
+    You can also provide -l flag to specify how many messages starting from the
+    last one you want to load.`,
 	Run: func(cmd *cobra.Command, args []string) {
         var id int64
 
@@ -30,7 +26,7 @@ to quickly create a Cobra application.`,
         } else if len(args) > 0 {
             i, err := strconv.Atoi(args[0])
             if err != nil {
-                log.Fatal(err)
+                panic(err)
             }
 
             id = int64(i)
@@ -38,6 +34,7 @@ to quickly create a Cobra application.`,
 
         kc := client.GetChat(id, limit)
         render.PrintChat(kc)
+
 	},
 }
 

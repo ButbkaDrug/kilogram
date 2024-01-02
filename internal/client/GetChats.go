@@ -7,16 +7,29 @@ import (
 	tdlib "github.com/zelenin/go-tdlib/client"
 )
 
+type state struct {
+    requests int
+    responses int
+    done bool
+}
+
+
 // Sends a LoadChats request to tdlib.
 // Returns a pointer to the Kilogram instance
 func GetChats() *Kilogram {
+
+    state := &state{
+        requests: 0,
+        responses: 0,
+        done: false,
+    }
 
 
     kg := NewKilogram()
 
     listener := kg.Tdlib.GetListener()
     kg.Waitgroup.Add(1)
-    go handleUpdates(kg, listener)
+    go handleUpdates(kg, listener, state)
 
 
     defer listener.Close()
@@ -26,36 +39,29 @@ func GetChats() *Kilogram {
         Limit: 100,
     }
 
-    var i = 0
 
     for {
         _, err := kg.Tdlib.LoadChats(r)
-        i++
         if err != nil {
             break
         }
+
+        state.requests += 1
     }
 
-    var j = 0
 
     for {
-        ok, err := kg.Tdlib.LoadChats(&tdlib.LoadChatsRequest{
+        _, err := kg.Tdlib.LoadChats(&tdlib.LoadChatsRequest{
             ChatList: &tdlib.ChatListArchive{},
-            Limit: 1,
+            Limit: 100,
         })
-        if ok != nil {
-            fmt.Println("\n\n", ok.Type, ok.Extra, "\n\n")
-        }
-
-        j++
 
         if err != nil {
+            state.done = true
             break
         }
+        state.requests += 1
     }
-    fmt.Println(i, " requested main list")
-    fmt.Println(j, " requested archived list")
-
 
 
     kg.Waitgroup.Wait()
@@ -65,15 +71,13 @@ func GetChats() *Kilogram {
 }
 
 
-func handleUpdates(kilogram *Kilogram, l *tdlib.Listener) {
+func handleUpdates(kilogram *Kilogram, l *tdlib.Listener, s *state) {
 
-    // loop:
     for update := range l.Updates {
-        fmt.Printf("%v\n", update)
+        if s.done && s.requests == s.responses { break }
         switch upd := update.(type) {
         case *tdlib.Ok:
-            fmt.Printf("%#v\n", upd)
-            // break loop
+            s.responses += 1
         case *tdlib.UpdateUser:
             // kilogram.Users[upd.User.Id] = upd.User
         case *tdlib.UpdateNewChat:

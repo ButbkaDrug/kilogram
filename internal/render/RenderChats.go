@@ -124,6 +124,8 @@ func renderChatsVerbose(chats []*tdlib.Chat){
     }
 
     fmt.Print(output)
+    fmt.Println("------------------------------------------------------------")
+    fmt.Println("Total of :", len(chats), " chats")
 
 }
 
