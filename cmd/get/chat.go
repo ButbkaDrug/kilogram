@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package get
 
 import (
@@ -11,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// chatCmd represents the chat command
 var chatCmd = &cobra.Command{
 	Use:   "chat",
 	Short: "Loads history of a specified chat",

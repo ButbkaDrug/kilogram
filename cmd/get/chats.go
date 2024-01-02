@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package get
 
 import (
@@ -11,16 +8,14 @@ import (
 
 var renderChatsParams *render.RenderChatsParams
 
-// chatsCmd represents the chats command
 var chatsCmd = &cobra.Command{
 	Use:   "chats",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Loads chats from your main chat list",
+	Long: `By default load chats will display chats with unread messages only.
+Pass --all flag to load all the chats. You can also specify how many chats you
+want to load by passing -l flag.
+EXAMPLE:
+kilogram load chats -a -v -l 20 - will load first 20 chats from a main chat list`,
 	Run: func(cmd *cobra.Command, args []string) {
         kg := client.GetChats()
         renderChatsParams.Order = kg.Positions
@@ -36,15 +31,6 @@ func init() {
         Verbose: false,
     }
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// chatsCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// chatsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
     chatsCmd.Flags().BoolVarP(
         &renderChatsParams.PrintAll,
         "all",
