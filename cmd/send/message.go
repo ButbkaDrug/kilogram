@@ -16,13 +16,9 @@ var(
 
 var messageCmd = &cobra.Command{
 	Use:   "message",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Sends a message to specified chat id",
+	Long: `You can pipe the text into this command or you can provied text as
+    the arguments.`,
 	Run: func(cmd *cobra.Command, args []string) {
         var text string
 
@@ -32,11 +28,11 @@ to quickly create a Cobra application.`,
             fmt.Fprintln(os.Stderr, err)
         }
 
+        text = strings.Join(stdin, "\n")
 
-        args = append(args,  stdin...)
-        text = strings.Join(args, "\n")
-
-
+        if len(stdin) == 0 && len(args) > 0 {
+            text = strings.Join(args, "\n")
+        }
 
         msg, err := client.SendTextMessage(dest, text)
 
