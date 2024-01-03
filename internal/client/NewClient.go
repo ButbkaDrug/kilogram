@@ -1,20 +1,32 @@
 package client
 
-import(
-    "path/filepath"
-    "log"
-    "os"
-    "os/signal"
-    "syscall"
-    tdlib "github.com/zelenin/go-tdlib/client"
-)
+import (
+	"log"
+	"os"
+	"os/signal"
+	"path/filepath"
+	"syscall"
+    "strconv"
 
-const (
-    apiId   = 25850438
-    apiHash = "b38df0acdac68ace28ea63cd70b95d67"
+	"github.com/joho/godotenv"
+	tdlib "github.com/zelenin/go-tdlib/client"
 )
 
 func NewClient() *tdlib.Client {
+
+    err := godotenv.Load()
+    if err != nil{
+        log.Fatal(err)
+    }
+    var apiHash = os.Getenv("KILOGRAM_API_HASH")
+
+    id, err := strconv.Atoi(os.Getenv("KILOGRAM_API_ID"))
+
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    var apiId = int32(id)
 
 	// client authorizer
 	authorizer := tdlib.ClientAuthorizer()
@@ -40,7 +52,7 @@ func NewClient() *tdlib.Client {
 		IgnoreFileNames:        false,
 	}
 
-    _, err := tdlib.SetLogVerbosityLevel(&tdlib.SetLogVerbosityLevelRequest{
+    _, err = tdlib.SetLogVerbosityLevel(&tdlib.SetLogVerbosityLevelRequest{
         NewVerbosityLevel: 0,
     })
 
