@@ -62,4 +62,12 @@ func init() {
         0,
         "Specify offset if you want to output chats starting not from first position",
     )
+
+    chatsCmd.Flags().StringVarP(
+        &renderChatsParams.Title,
+        "starts",
+        "t",
+        "",
+        "If specified, only chats that starts with provided string will be returned",
+    )
 }

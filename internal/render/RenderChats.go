@@ -15,6 +15,7 @@ type RenderChatsParams struct {
     PrintAll bool
     Verbose bool
     Order []int64
+    Title string
 }
 
 const (
@@ -44,6 +45,11 @@ func RenderChats (chats map[int64]*tdlib.Chat, params *RenderChatsParams) {
         chat := chats[id]
 
         if chat == nil { continue }
+
+        if params.Title != "" && strings.Index(chat.Title, params.Title)!= 0 {
+            continue
+
+        }
 
         chatList = append(chatList, chat)
     }
